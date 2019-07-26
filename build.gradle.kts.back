@@ -1,0 +1,45 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+open class GreetingPluginExtension {
+    var message = "Default greeting"
+}
+
+class GreetingPlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        val extension = project.extensions.create<GreetingPluginExtension>("greeting")
+
+        project.task("hello") {
+            doLast {
+                println(extension.message)
+            }
+        }
+        project.tasks.register("hello2") {
+            dependsOn("hello")
+            doLast {
+                println("hello2")
+            }
+        }
+    }
+}
+
+// Apply the plugin
+apply<GreetingPlugin>()
+
+plugins {
+    kotlin("jvm") version "1.3.40"
+}
+
+group = "AR"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
